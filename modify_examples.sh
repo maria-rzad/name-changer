@@ -34,22 +34,34 @@ display()
 	fi
 }
 
-input_error_case()
+test_error()
 {
-	echo "TEST $1"; shift
+	echo "modify.sh $*"
+	../modify.sh $*
+	echo
+	
 }
 # test_case <description> <directory> <recursion> <args for modify...>
 
-test_case "1: to lowercase" test1 0 -l lowercase mIXeD with_extension.txt UPPERCASE.txt direCTORY
+test_case "1: multiple files to uppercase" test1 0 -u lowercase mIXeD with_extension.txt UPPERCASE direCTORY
 
-test_case "2: to uppercase" test2 0 -u lowercase.txt mIXeD.txt no_extension UPPERCASE.txt
+test_case "2: custom sed" test2 0 s/hello/bye/ hello_everyone hello_world
 
-test_case "3: file with a new name already exists" test3 0 -u i_exist.txt
+test_case "3: file with a new name already exists" test3 0 -l EXISTING_FILE
 
-test_case "4: file does not exist" test3 0 -l i_do_not_exist
+test_case "4: file does not exist" test3 0 -u nonexistent_file
 
-test_case "5: recursion" test4 1 -u -r subdirectory1 subdirectory2 some_file.docx
+test_case "5: recursion" test4 1 -u -r subdirectory1 subdirectory2 some_file
 
 test_case "6: names with spaces" test5 1 -u -r spaces
 
-test_case "7: custom sed" test6 1 -r s/hello/bye/ greetings
+echo "INCORRECT INPUT TESTS"
+test_error
+
+test_error -h -l
+
+test_error -u -l -r file
+
+test_error -u -k file
+
+test_error h/e/l/l/o file
